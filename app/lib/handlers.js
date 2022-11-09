@@ -16,6 +16,7 @@ const handlers = {};
 
 /**
  * @name UsersHandler
+ * @namespace UsersHandler
  * @param data {any | {method: string}}
  * @param callback {function(statusCode: number, payload?: any)}
  * @return void
@@ -42,7 +43,8 @@ handlers._users = {};
 
 // Users - post
 /**
- * @name UsersPostMethod
+ * @name UsersCreateHandler
+ * @namespace UsersHandler
  * @param data
  * @param callback {function(data: any, callback: any)}
  */
@@ -102,6 +104,8 @@ handlers._users.post = function (data, callback) {
 // @TODO Only allow authenticated user to access owner-owned object.
 /**
  *
+ * @name UsersReadHandler
+ * @namespace UsersHandler
  * @param data {any}
  * @param callback {function(data: any, callback: any)}
  * @return data
@@ -129,7 +133,8 @@ handlers._users.get = function (data, callback) {
 // Users - put
 // @TODO Only allow authenticated user to access owner-owned object.
 /**
- *
+ * @name UsersUpdateHandler
+ * @namespace UsersHandler
  * @param data {{payload: {firstName?: string, lastName?: string, phone: string,
  *     password: string}}}
  * @param callback
@@ -187,7 +192,8 @@ handlers._users.put = function (data, callback) {
 // @TODO Only allow authenticated user to access owner-owned object.
 // @TODO Clean up (remove) and other data files associated with this users
 /**
- *
+ * @name UsersDeleteHandler
+ * @namespace UsersHandler
  * @param data {any}
  * @param callback {function(statusCode: number, message?: any)}
  */
@@ -218,6 +224,7 @@ handlers._users.delete = function (data, callback) {
 
 /**
  * @name TokensHandler
+ * @namespace TokensHandler
  * @param data {any | {method: string}}
  * @param callback {function(statusCode: number, payload?: any)}
  * @return void
@@ -234,9 +241,9 @@ handlers.tokens = function (data, callback) {
 
 handlers._tokens = {};
 
-
 /**
- *
+ * @name TokensCreateHandler
+ * @namespace TokensHandler
  * @param data {{phone: string, password: string}}
  * @param callback {function(statusCode: number, payload?: any)}
  */
@@ -285,7 +292,8 @@ handlers._tokens.post = function (data, callback) {
     })
 };
 /**
- *
+ * @name TokensReadHandler
+ * @namespace TokensHandler
  * @param data {any}
  * @param callback {function(statusCode: number, payload?: any)}
  */
@@ -307,7 +315,8 @@ handlers._tokens.get = function (data, callback) {
 };
 
 /**
- *
+ * @name TokensUpdateHandler
+ * @namespace TokensHandler
  * @param data {{id: string, extend: boolean}}
  * @param callback
  */
@@ -346,10 +355,10 @@ handlers._tokens.put = function (data, callback) {
 };
 
 /**
- *
- * @param data
+ * @name TokensDeleteHandler
+ * @namespace TokensHandler
+ * @param data {any}
  * @param callback
- *
  */
 handlers._tokens.delete = function (data, callback) {
     // Validation for phone number
