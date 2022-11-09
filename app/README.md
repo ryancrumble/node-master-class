@@ -22,3 +22,8 @@ The API has two environments, _staging_ and _production_.
 - Run `node index.js` from this directory to run the server.
 
 - Run `NODE_ENV=production node index.js` to run the server in prod mode.
+
+
+## Product modifications
+
+The course was originally designed for ES5, however, I have used alternative code style due to personal preference and ease of ES6+.
