@@ -6,7 +6,7 @@ A collection of apps written in vanilla Node.js.
 
 ## Objective
 
-The objective of this course to understand how Node.js works at its core without frameworks nor dependencies.
+The objective of this course to understand how Node.js works at its foundations and provide a stepping stone into building backend applications with Node.js. The apps are built without frameworks nor dependencies intentionally as it provides a stronger understanding of Node.js at its core.
 
 
 ## Outline
