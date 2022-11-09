@@ -1,3 +1,8 @@
+### Database
+.data/test/*
+.data/tokens/*
+.data/users/*
+
 ### JetBrains template
 # Covers JetBrains IDEs: WebStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
@@ -43,5 +48,4 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Optional REPL history
 .node_repl_history
-
 
