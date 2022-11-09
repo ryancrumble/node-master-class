@@ -37,4 +37,26 @@ helpers.parseJsonToObject = function (string) {
     }
 };
 
+
+/**
+ * @name CreateRandomString
+ * @desc Generate a random string
+ * @param stringLength {number}
+ */
+helpers.createRandomString = function (stringLength) {
+    if (!stringLength) {
+        return false;
+    }
+
+    // Declare all characters
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    let str = '';
+    for (let i = 0; i < stringLength; i++) {
+        str += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    return str;
+};
+
 module.exports = helpers;
