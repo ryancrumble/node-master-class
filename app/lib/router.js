@@ -11,8 +11,9 @@ const handlers = require("./handlers");
  */
 const router = {
     ping: handlers.ping,
+    checks: handlers.checks,
+    tokens: handlers.tokens,
     users: handlers.users,
-    tokens: handlers.tokens
 };
-
 module.exports = router;
+

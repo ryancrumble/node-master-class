@@ -22,7 +22,6 @@ helpers.hash = function (rawString) {
     return crypto.createHmac('sha256', config.hashingSecret).update(rawString).digest('hex');
 };
 
-
 /**
  * @name ParseJSONToObject
  * @desc Parse a JSON string to an object in all cases, without throwing
