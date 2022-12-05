@@ -63,7 +63,7 @@ const createRandomString = function(stringLength) {
  */
 const sendTwilioSms = function(phone, message, callback) {
   // Validate params
-  if (typeof phone !== 'string' || phone.trim().length !== 9) {
+  if (typeof phone !== 'string' || phone.trim().length !== 10) {
     return callback('Phone number is invalid. Please check the phone number is provided and the length of the number')
   }
 

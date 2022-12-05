@@ -1,7 +1,9 @@
-const acceptableMethods = ['post', 'get', 'put', 'delete'];
-const acceptableProtocols = ['http', 'https'];
+const acceptedMethods = ['post', 'get', 'put', 'delete'];
+const acceptedProtocols = ['http', 'https'];
+const checkState = ['up', 'down'];
 
 module.exports = {
-    acceptableMethods,
-    acceptableProtocols
+    acceptableMethods: acceptedMethods,
+    acceptableProtocols: acceptedProtocols,
+    checkState
 }
