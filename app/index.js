@@ -14,7 +14,6 @@ const handlers = require('./lib/handlers');
 const helpers = require('./lib/helpers');
 const router = require("./lib/router");
 
-
 // Unified Server
 const unifiedServer = (req, res) => {
     // Get and parse the url
