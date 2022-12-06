@@ -1,5 +1,5 @@
 /**
- * @module Router
+ * @module RouterLibrary
  * @desc Router for all requests
  */
 
