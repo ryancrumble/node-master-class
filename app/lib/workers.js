@@ -7,6 +7,8 @@
 const http = require('http')
 const https = require('https')
 const url = require('url')
+const util = require('util')
+const debug = util.debuglog('workers')
 
 const _data = require('./data')
 const _logs = require('./logs')
@@ -44,9 +46,9 @@ function log(data, outcome, state, shouldAlert, timeOfCheck) {
   // Append logString to the file
   _logs.append(logFileName, logString, (err) => {
     if (err) {
-      console.log('Logging to file failed')
+      debug('Logging to file failed')
     } else {
-      console.log('Logging to file succeed')
+      debug('Logging to file succeed')
     }
   })
 }
@@ -78,6 +80,10 @@ function loopRotateLogs() {
  * @desc Initialise workers
  */
 function init() {
+
+  // Send to console (in yellow)
+  console.log('\x1b[33m%s\x1b[0m', 'Background workers are running')
+
   // Execute all the checks immediately
   gatherAllChecks()
 
@@ -101,7 +107,7 @@ function rotateLogs() {
 
   _logs.list(false, (err, logs) => {
     if (err || !logs || !logs.length) {
-      return console.log('Error: Could not find logs to rotate')
+      return debug('Error: Could not find logs to rotate')
     }
 
     logs.forEach((logName) => {
@@ -111,15 +117,15 @@ function rotateLogs() {
 
       _logs.compress(logId, newFileId, (err) => {
         if (err) {
-          return console.error('Error compressing one of the files', err)
+          return debug('Error compressing one of the files', err)
         }
 
         // Truncate the log
         _logs.truncate(logId, (err) => {
           if (err) {
-            return console.error('Error truncating logFile')
+            return debug('Error truncating logFile')
           } else {
-            return console.log('Success truncating logFile')
+            return debug('Success truncating logFile')
           }
         })
       })
@@ -136,13 +142,13 @@ function gatherAllChecks() {
   // Get all checks in the system
   _data.list('checks', (err, checks) => {
     if (err || !checks || checks.length <= 0) {
-      return console.error('Error: Could not find any checks to process', err)
+      return debug('Error: Could not find any checks to process', err)
     }
 
     checks.forEach((check) => {
       _data.read('checks', check, (err, checkData) => {
         if (err || !checkData) {
-          return console.error('Error reading one of the check\'s data')
+          return debug('Error reading one of the check\'s data')
         }
 
         validateCheckData(checkData)
@@ -176,7 +182,7 @@ function validateCheckData(data) {
   checkData.lastChecked = typeof checkData.lastChecked === 'number' && checkData.lastChecked > 0 ? checkData.lastChecked : null
 
   if (!checkData.id || !checkData.userPhone || !checkData.url || !checkData.protocol || !checkData.method || !checkData.successCodes || !checkData.timeoutSeconds) {
-    return console.error('One of the checks is not formatted correctly. Skipping it', checkData)
+    return debug('One of the checks is not formatted correctly. Skipping it', checkData)
   }
 
   performCheck(checkData)
@@ -294,10 +300,10 @@ function processCheckOutcome(data, outcome) {
   // Save the updates to disk
   _data.update('checks', newCheckData.id, newCheckData, (err) => {
     if (err) {
-      console.error('Error trying to save update to checks')
+      debug('Error trying to save update to checks')
     } else {
       if (!shouldAlert) {
-        console.log('Check outcome has not change, no alert needed.')
+        debug('Check outcome has not change, no alert needed.')
       } else {
         alertUserToStatusChange(newCheckData)
       }
@@ -316,8 +322,8 @@ function processCheckOutcome(data, outcome) {
 function alertUserToStatusChange(data) {
   const message = `Alert: Your check for ${data.method.toUpperCase()} ${data.protocol}://${data.url} is currently ${data.state}`
 
-  console.log(message)
-  return console.log('Twilio SMS skipped due to auth error with API:')
+  debug(message)
+  return debug('Twilio SMS skipped due to auth error with API:')
 
   // helpers.sendTwilioSms(data.userPhone, message, (err) => {
   //   if (err) {

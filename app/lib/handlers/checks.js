@@ -117,7 +117,7 @@ function getCheck(data, callback) {
 
     // Validate user is authorised and the user is the owner of the token (via
     // user phone number)
-      verifyToken(token, checkData.userPhone, (isValidToken) => {
+    verifyToken(token, checkData.userPhone, (isValidToken) => {
       if (!isValidToken) {
         return callback(403)
       } else {
@@ -167,7 +167,7 @@ function putCheck(data, callback) {
 
     // Validate user is authorised and the user is the owner of the token (via
     // user phone number)
-      verifyToken(token, checkData.userPhone, (isValidToken) => {
+    verifyToken(token, checkData.userPhone, (isValidToken) => {
       if (!isValidToken) {
         return callback(403)
       } else {
@@ -219,7 +219,7 @@ function deleteCheck(data, callback) {
 
   // Validate ID is provided
   if (!id) {
-    return callback(400, {"Error": "No id provided"})
+    return callback(400, { 'Error': 'No id provided' })
   }
 
   // Lookup the check to delete
@@ -247,10 +247,10 @@ function deleteCheck(data, callback) {
           } else {
 
             const userChecks = typeof (userData.checks) === 'object' && userData.checks instanceof Array ? userData.checks : []
-            const positionOfCheck = userChecks.indexOf(id);
+            const positionOfCheck = userChecks.indexOf(id)
 
             if (positionOfCheck <= -1) {
-              return callback(500, {'Error': "Could not find the check on the user's object"})
+              return callback(500, { 'Error': 'Could not find the check on the user\'s object' })
             }
 
             userChecks.splice(positionOfCheck, 1)
@@ -261,7 +261,7 @@ function deleteCheck(data, callback) {
                 return callback(500, { 'Error': 'Could not update the specified user' })
 
               } else {
-                callback(200)
+                return callback(200)
               }
             })
           }
@@ -271,9 +271,19 @@ function deleteCheck(data, callback) {
   })
 }
 
-module.exports = {
+const _checks = {
   post: postChecks,
   get: getCheck,
   put: putCheck,
-  delete: deleteCheck
+  delete: deleteCheck,
 }
+
+const checksHandler = function(data, callback) {
+  if (acceptableMethods.includes(data.method)) {
+    return _checks[data.method](data, callback)
+  } else {
+    return callback(405)
+  }
+}
+
+module.exports = checksHandler

@@ -3,15 +3,16 @@
  *
  */
 
-const checksHandler = require('./checks')
-const tokensHandler = require('./tokens')
-const usersHandler = require('./users')
-const { notFound, ping } = require('./common')
+const checks = require('./checks')
+const tokens = require('./tokens')
+const users = require('./users')
+const ping = require('./ping')
+const notFound = require('./notFound')
 
 module.exports = {
-  checks: checksHandler,
-  tokens: tokensHandler,
-  users: usersHandler,
+  checks,
+  tokens,
+  users,
   ping,
-  notFound
+  notFound,
 }

@@ -5,6 +5,7 @@
 
 const _data = require('../data')
 const helpers = require('../helpers')
+const { acceptableMethods } = require('../constants')
 
 /**
  * @name TokenCreateHandler
@@ -169,10 +170,20 @@ function verifyToken(id, phone, callback) {
   })
 }
 
-module.exports = {
+const _tokens = {
   post: postToken,
   get: getToken,
   put: putToken,
   delete: deleteToken,
-  verifyToken
 }
+
+const tokensHandler = function(data, callback) {
+  if (acceptableMethods.includes(data.method)) {
+    return _tokens[data.method](data, callback)
+  } else {
+    return callback(405)
+  }
+}
+
+module.exports = tokensHandler
+module.exports.verifyToken = verifyToken

@@ -4,109 +4,112 @@
  */
 
 // Dependencies
-const fs = require('fs');
-const http = require('http');
-const https = require('https');
-const path = require('path');
-const StringDecoder = require('string_decoder').StringDecoder;
-const url = require('url');
+const fs = require('fs')
+const http = require('http')
+const https = require('https')
+const path = require('path')
+const StringDecoder = require('string_decoder').StringDecoder
+const url = require('url')
+const util = require('util')
+const debug = util.debuglog('server')
 
-const config = require('./config');
-const handlers = require('./handlers');
-const helpers = require('./helpers');
-const router = require("./router");
+const config = require('./config')
+const handlers = require('./handlers')
+const helpers = require('./helpers')
+const router = require('./router')
 
 // Unified Server
 const unifiedServer = (req, res) => {
   // Get and parse the url
-  const parsedUrl = url.parse(req.url, true);
+  const parsedUrl = url.parse(req.url, true)
 
   // Get the path
-  const path = parsedUrl.pathname;
-  const trimmedPath = path.replace(/^\/+|\/+$/g, '');
+  const path = parsedUrl.pathname
+  const trimmedPath = path.replace(/^\/+|\/+$/g, '')
 
   // Get the query string as an object
   // NOTE: not working with curl command
-  const queryStringObject = parsedUrl.query;
+  const queryStringObject = parsedUrl.query
 
   // Get the http method
-  const method = req.method.toLowerCase();
+  const method = req.method.toLowerCase()
 
   // Get the headers as an object
-  const headers = req.headers;
+  const headers = req.headers
 
   // Get the payload, if present
-  const decoder = new StringDecoder('utf-8');
-  let buffer = '';
+  const decoder = new StringDecoder('utf-8')
+  let buffer = ''
 
   req.on('data', (data) => {
-    buffer += decoder.write(data);
-  });
+    buffer += decoder.write(data)
+  })
 
   req.on('end', () => {
-    buffer += decoder.end();
+    buffer += decoder.end()
 
     /**
      * @desc Get selected handler for route
      * @default calls NotFoundHandler
-     * @type {(function(data: any, callback: function(statusCode: string,
-     *     payload?: any)): void)}
+     * @type {(function(data: any, callback: (statusCode: string,
+     *     payload?: any) => void): void)}
      */
-    const chosenHandler = typeof (router[trimmedPath]) !== "undefined" ? router[trimmedPath] : handlers.notFound;
+    const chosenHandler = typeof router[trimmedPath] !== 'undefined' ? router[trimmedPath] : handlers.notFound
 
     const _data = {
       trimmedPath,
       queryStringObject,
       method,
       headers,
-      payload: helpers.parseJsonToObject(buffer)
-    };
+      payload: helpers.parseJsonToObject(buffer),
+    }
 
     // Route the request to the handler specified in the router
     chosenHandler(_data, (statusCode, payload) => {
       // Use status code called back by handler or default
-      statusCode = typeof (statusCode) == 'number' ? statusCode : 200;
+      statusCode = typeof (statusCode) == 'number' ? statusCode : 200
       // Use payload called by handler or default
-      payload = JSON.stringify(typeof (payload) == 'object' ? payload : {});
+      payload = JSON.stringify(typeof (payload) == 'object' ? payload : {})
 
       // Return response
-      res.setHeader('Content-Type', 'application/json');
-      res.writeHead(statusCode);
-      res.end(payload);
+      res.setHeader('Content-Type', 'application/json')
+      res.writeHead(statusCode)
+      res.end(payload)
 
-      // Log the request path
-      console.log('Request received: ', method);
-      console.log('On path: ', trimmedPath);
-      console.log('Query parameters: ', queryStringObject);
-      console.log('Headers: ', headers);
-      console.log('Payload: ', buffer);
-    });
-  });
-};
+      // If the response is 200 print green, otherwise print red
+      if (statusCode !== 200) {
+        debug('\x1b[31m%s\x1b[0m', `${method.toUpperCase()} /${trimmedPath} ${statusCode}`)
+      } else {
+        debug('\x1b[32m%s\x1b[0m', `${method.toUpperCase()} /${trimmedPath} ${statusCode}`)
+      }
+    })
+  })
+}
 
 const httpsServerOptions = {
   key: fs.readFileSync(path.join(__dirname, '/../https/key.pem')),
   cert: fs.readFileSync(path.join(__dirname, '/../https/cert.pem')),
-};
+}
 
 function init() {
 // Instantiate HTTP server
   const httpServer = http.createServer((req, res) => {
-    unifiedServer(req, res);
-  });
+    unifiedServer(req, res)
+  })
 
   const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
-    unifiedServer(req, res);
-  });
+    unifiedServer(req, res)
+  })
 
-// Start the servers
+// Start the HTTP server
   httpServer.listen(config.httpPort, () => {
-    console.log(`Server is listening on port ${config.httpPort}`);
-  });
+    console.log('\x1b[36m%s\x1b[0m', `Server is listening on port ${config.httpPort}`)
+  })
 
+  // Start the HTTPS server
   httpsServer.listen(config.httpsPort, () => {
-    console.log(`Server is listening on port ${config.httpsPort}`);
-  });
+    console.log('\x1b[35m%s\x1b[0m', `Server is listening on port ${config.httpsPort}`)
+  })
 }
 
 module.exports = {

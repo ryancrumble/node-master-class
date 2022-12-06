@@ -6,6 +6,7 @@
 const helpers = require('../helpers')
 const _data = require('../data')
 const { verifyToken } = require('./tokens')
+const { acceptableMethods } = require('../constants')
 
 /**
  * @name UsersCreateHandler
@@ -229,9 +230,19 @@ function deleteUser(data, callback) {
   })
 }
 
-module.exports = {
+const _users = {
   post: postUser,
   get: getUser,
   put: putUser,
   delete: deleteUser,
 }
+
+const userHandler = function(data, callback) {
+  if (acceptableMethods.includes(data.method)) {
+    return _users[data.method](data, callback)
+  } else {
+    return callback(405)
+  }
+}
+
+module.exports = userHandler
