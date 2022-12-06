@@ -8,7 +8,6 @@ const https = require('https')
 const url = require('url')
 
 const _data = require('./data')
-const helpers = require('./helpers')
 const {
   acceptableProtocols,
   acceptableMethods,
@@ -120,9 +119,6 @@ function performCheck(data) {
     timeout: data.timeoutSeconds * 1000,
   }
 
-  // Instantiate the request object (using correct protocol module)
-  // const _moduleToUse = data.protocol === 'http' ? http : https
-
   function requestCallback(res) {
     // Update check outcome and pass data
     outcome.responseCode = res.statusCode
@@ -162,6 +158,7 @@ function performCheck(data) {
 
   }
 
+  // Instantiate the request object (using correct protocol module)
   const req = data.protocol === 'http' ?
     http.request(requestDetails, requestCallback) :
     https.request(requestDetails, requestCallback)
@@ -218,13 +215,16 @@ function processCheckOutcome(data, outcome) {
 function alertUserToStatusChange(data) {
   const message = `Alert: Your check for ${data.method.toUpperCase()} ${data.protocol}://${data.url} is currently ${data.state}`
 
-  helpers.sendTwilioSms(data.userPhone, message, (err) => {
-    if (err) {
-      console.error('Error: Could not send SMS alert to user regarding their check state change: ', err)
-    } else {
-      console.log('Success: User was alerted to a status change in their check, via SMS. Message: ', message)
-    }
-  })
+  console.log(message)
+  return console.log('Twilio SMS skipped due to auth error with API:')
+
+  // helpers.sendTwilioSms(data.userPhone, message, (err) => {
+  //   if (err) {
+  //     console.error('Error: Could not send SMS alert to user regarding their check state change: ', err)
+  //   } else {
+  //     console.log('Success: User was alerted to a status change in their check, via SMS. Message: ', message)
+  //   }
+  // })
 }
 
 

@@ -82,7 +82,6 @@ const sendTwilioSms = function(phone, message, callback) {
   // because the Content-Type is not application/JSON.
   const stringPayload = querystring.stringify(payload)
 
-
   // Configure the request details
   const requestDetails = {
     protocol: 'https:',
@@ -91,11 +90,12 @@ const sendTwilioSms = function(phone, message, callback) {
     path: '/2010-04-01/Accounts/' + config.twilio.accountSid + '/Messages.json',
     auth: config.twilio.accountSid + ':' + config.twilio.authToken,
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       'Content-Length': Buffer.byteLength(stringPayload),
     },
   }
 
+  // @NOTE Twilio api no longer working with request details.
   // Instantiate the request object
   const req = https.request(requestDetails, (res) => {
     // Grab the status of the send request
