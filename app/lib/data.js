@@ -1,5 +1,6 @@
 /**
- * Library for storing and editing data
+ * @module Data
+ * @desc Library for storing and editing data
  */
 
 const fs = require('fs')

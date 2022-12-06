@@ -1,5 +1,6 @@
 /**
- * Worker related tasks
+ * @module Worker
+ * @desc Worker related tasks
  */
 
 // Dependencies

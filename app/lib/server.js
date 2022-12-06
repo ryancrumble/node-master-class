@@ -1,5 +1,6 @@
-/*
- * Server related tasks
+/**
+ * @module Server
+ * @desc Server related tasks
  */
 
 // Dependencies

@@ -1,3 +1,7 @@
+/**
+ * @module Constants
+ */
+
 const acceptedMethods = ['post', 'get', 'put', 'delete'];
 const acceptedProtocols = ['http', 'https'];
 const checkState = ['up', 'down'];

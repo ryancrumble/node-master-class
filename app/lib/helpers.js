@@ -1,5 +1,6 @@
 /**
- * Helpers for various tasks
+ * @module Helpers
+ * @desc Helpers for various tasks
  */
 
 const crypto = require('crypto')
