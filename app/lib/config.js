@@ -1,5 +1,6 @@
 /**
- * Create and export configuration variables
+ * @module Config
+ * @desc Create and export configuration variables
  */
 
 // Container for all environments
