@@ -1,5 +1,5 @@
 /**
- * @module Config
+ * @module ConfigLibrary
  * @desc Create and export configuration variables
  */
 

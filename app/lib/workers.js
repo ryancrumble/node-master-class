@@ -1,5 +1,5 @@
 /**
- * @module Worker
+ * @module WorkersLibrary
  * @desc Worker related tasks
  */
 
@@ -9,6 +9,7 @@ const https = require('https')
 const url = require('url')
 
 const _data = require('./data')
+const _logs = require('./logs')
 const {
   acceptableProtocols,
   acceptableMethods,
@@ -16,9 +17,45 @@ const {
 } = require('./constants')
 
 /**
+ * @name Log
+ * @desc Log data to the disk
+ * @param data
+ * @param outcome
+ * @param state
+ * @param shouldAlert
+ * @param timeOfCheck
+ */
+function log(data, outcome, state, shouldAlert, timeOfCheck) {
+  // Form the log data
+  const logData = {
+    check: data,
+    outcome,
+    state,
+    alert: shouldAlert,
+    time: timeOfCheck,
+  }
+
+  // Convert to string
+  const logString = JSON.stringify(logData)
+
+  // Determine the name of the log file
+  const logFileName = data.id
+
+  // Append logString to the file
+  _logs.append(logFileName, logString, (err) => {
+    if (err) {
+      console.log('Logging to file failed')
+    } else {
+      console.log('Logging to file succeed')
+    }
+  })
+}
+
+/**
+ * @name LoopGatherAllChecks
  * @desc Executes the worker process once a minute
  */
-function loopChecks() {
+function loopGatherAllChecks() {
   // Perform checks once a minute
   setInterval(() => {
     gatherAllChecks()
@@ -26,6 +63,18 @@ function loopChecks() {
 }
 
 /**
+ * @name LoopRotateLogs
+ * @desc Executes the loop-rotation process once a day
+ */
+function loopRotateLogs() {
+  // Perform checks once a minute
+  setInterval(() => {
+    rotateLogs()
+  }, 1000 * 60 * 60 * 24)
+}
+
+/**
+ * @name Init
  * @desc Initialise workers
  */
 function init() {
@@ -33,10 +82,53 @@ function init() {
   gatherAllChecks()
 
   // Execute all the checks on a set interval
-  loopChecks()
+  loopGatherAllChecks()
+
+  // Compress all the logs immediately
+  rotateLogs()
+
+  // Call the compression loop to compress the logs
+  loopRotateLogs()
 }
 
 /**
+ * @name RotateLogs
+ * @desc Rotate (compress) log files
+ * @return void
+ */
+function rotateLogs() {
+  // List all non-compressed log files
+
+  _logs.list(false, (err, logs) => {
+    if (err || !logs || !logs.length) {
+      return console.log('Error: Could not find logs to rotate')
+    }
+
+    logs.forEach((logName) => {
+      // Compress the data to a new file
+      const logId = logName.replace('.log', '')
+      const newFileId = `${logId}-${Date.now()}`
+
+      _logs.compress(logId, newFileId, (err) => {
+        if (err) {
+          return console.error('Error compressing one of the files', err)
+        }
+
+        // Truncate the log
+        _logs.truncate(logId, (err) => {
+          if (err) {
+            return console.error('Error truncating logFile')
+          } else {
+            return console.log('Success truncating logFile')
+          }
+        })
+      })
+    })
+  })
+}
+
+/**
+ * @name GatherAllChecks
  * @desc Looks up all checks and validates the data
  * @return void
  */
@@ -61,6 +153,7 @@ function gatherAllChecks() {
 }
 
 /**
+ * @name ValidateCheckData
  * @desc Sanity checking the check data
  * @param data {{id: string, userPhone: string, url: string, protocol:
  *   string, method: string, successCodes: string[], timeoutSeconds: number,
@@ -90,6 +183,7 @@ function validateCheckData(data) {
 }
 
 /**
+ * @name PerformCheck
  * @desc Perform the check and send data with check process
  * @param data {{id: string, userPhone: string, url: string, protocol:
  *   string, method: string, successCodes: string[], timeoutSeconds: number,
@@ -170,6 +264,7 @@ function performCheck(data) {
 
 
 /**
+ * @name ProcessCheckOutcome
  * @desc Process check outcome and (if needed) update check data and trigger an
  *   alert Special logic for accommodating a check that has never been tested
  *   (no alert fired)
@@ -185,6 +280,10 @@ function processCheckOutcome(data, outcome) {
 
   // Decide if an alert is warranted
   const shouldAlert = !!(data.lastChecked && data.state !== state)
+
+  // Log the outcome
+  const timeOfCheck = Date.now()
+  log(data, outcome, state, shouldAlert, timeOfCheck)
 
   const newCheckData = {
     ...data,
@@ -207,6 +306,7 @@ function processCheckOutcome(data, outcome) {
 }
 
 /**
+ * @name AlertUserToStatusChange
  * @desc Alert the user as to a change in their check status
  * @param data {{protocol: string, method: string, successCodes: string[],
  *   userPhone: string, timeoutSeconds: number, id: string, state: (string),
@@ -221,13 +321,11 @@ function alertUserToStatusChange(data) {
 
   // helpers.sendTwilioSms(data.userPhone, message, (err) => {
   //   if (err) {
-  //     console.error('Error: Could not send SMS alert to user regarding their check state change: ', err)
-  //   } else {
-  //     console.log('Success: User was alerted to a status change in their check, via SMS. Message: ', message)
-  //   }
+  //     console.error('Error: Could not send SMS alert to user regarding their
+  // check state change: ', err) } else { console.log('Success: User was
+  // alerted to a status change in their check, via SMS. Message: ', message) }
   // })
 }
-
 
 module.exports = {
   init,

@@ -1,5 +1,5 @@
 /**
- * @module Server
+ * @module ServerLibrary
  * @desc Server related tasks
  */
 

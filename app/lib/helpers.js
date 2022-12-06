@@ -1,5 +1,5 @@
 /**
- * @module Helpers
+ * @module HelpersLibrary
  * @desc Helpers for various tasks
  */
 

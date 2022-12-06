@@ -1,5 +1,5 @@
 /**
- * @module Constants
+ * @module ConstantsLibrary
  */
 
 const acceptedMethods = ['post', 'get', 'put', 'delete'];
