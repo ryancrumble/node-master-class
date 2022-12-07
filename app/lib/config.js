@@ -18,6 +18,12 @@ environments.staging = {
     authToken: process.env.TWILIO_AUTH_TOKEN,
     fromPhone: process.env.TWILIO_FROM_PHONE,
   },
+  templateGlobals: {
+    appName: 'UptimeChecker',
+    companyName: 'FakeComp. Pty Ltd',
+    yearCreated: '2018',
+    baseURL: 'http://localhost:3000/'
+  }
 }
 
 // Production environment
@@ -32,6 +38,12 @@ environments.production = {
     authToken: process.env.TWILIO_AUTH_TOKEN,
     fromPhone: process.env.TWILIO_FROM_PHONE,
   },
+  templateGlobals: {
+    appName: 'UptimeChecker',
+    companyName: 'FakeComp. Pty Ltd',
+    yearCreated: '2018',
+    baseURL: 'http://localhost:3000/'
+  }
 }
 
 // Get environment from command line argument
