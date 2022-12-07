@@ -3,9 +3,9 @@
  *
  */
 
-const _data = require('../data')
-const helpers = require('../helpers')
-const { acceptableMethods } = require('../constants')
+const _data = require('../../data')
+const helpers = require('../../helpers')
+const { acceptableMethods } = require('../../constants')
 
 /**
  * @name TokenCreateHandler

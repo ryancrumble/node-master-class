@@ -3,10 +3,10 @@
  *
  */
 
-const helpers = require('../helpers')
-const _data = require('../data')
+const helpers = require('../../helpers')
+const _data = require('../../data')
 const { verifyToken } = require('./tokens')
-const { acceptableMethods } = require('../constants')
+const { acceptableMethods } = require('../../constants')
 
 /**
  * @name UsersCreateHandler
