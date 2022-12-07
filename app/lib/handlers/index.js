@@ -1,18 +1,8 @@
-/**
- * @module Handlers
- *
- */
+const jsonHandlers = require('./json')
+const htmlHandlers = require('./html')
 
-const checks = require('./checks')
-const tokens = require('./tokens')
-const users = require('./users')
-const ping = require('./ping')
-const notFound = require('./notFound')
 
 module.exports = {
-  checks,
-  tokens,
-  users,
-  ping,
-  notFound,
+  ...jsonHandlers,
+  ...htmlHandlers
 }

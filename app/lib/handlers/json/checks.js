@@ -3,10 +3,10 @@
  *
  */
 
-const { acceptableMethods, acceptableProtocols } = require('../constants')
-const _data = require('../data')
-const config = require('../config')
-const helpers = require('../helpers')
+const { acceptableMethods, acceptableProtocols } = require('../../constants')
+const _data = require('../../data')
+const config = require('../../config')
+const helpers = require('../../helpers')
 const { verifyToken } = require('./tokens')
 
 

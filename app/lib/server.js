@@ -14,7 +14,7 @@ const util = require('util')
 const debug = util.debuglog('server')
 
 const config = require('./config')
-const handlers = require('./handlers')
+const handlers = require('./handlers/json')
 const helpers = require('./helpers')
 const router = require('./router')
 
@@ -65,14 +65,36 @@ const unifiedServer = (req, res) => {
     }
 
     // Route the request to the handler specified in the router
-    chosenHandler(_data, (statusCode, payload) => {
-      // Use status code called back by handler or default
-      statusCode = typeof (statusCode) == 'number' ? statusCode : 200
-      // Use payload called by handler or default
-      payload = JSON.stringify(typeof (payload) == 'object' ? payload : {})
+    /**
+     * @param _data {any}
+     * @param callback {(statusCode?: number, payload?: string | object,
+     *   contentType?: 'json' | 'html') => void}
+     * @return {void}
+     */
+    chosenHandler(_data, (statusCode, payload, contentType) => {
+      // Determine type of response, fallback to JSON
+      contentType = typeof contentType === 'string' ? contentType : 'json'
 
-      // Return response
-      res.setHeader('Content-Type', 'application/json')
+      // Use status code called back by handler or default
+      statusCode = typeof (statusCode) === 'number' ? statusCode : 200
+
+
+      // Return the response parts that are content specific
+      switch (contentType) {
+        case 'json':
+          res.setHeader('Content-Type', 'application/json')
+          payload = JSON.stringify(typeof (payload) === 'object' ? payload : {})
+          break
+        case 'html':
+          res.setHeader('Content-Type', 'text/html')
+          payload = typeof (payload) === 'string' ? payload : ''
+          break
+        default:
+          res.setHeader('Content-Type', 'application/json')
+          payload = JSON.stringify(typeof (payload) === 'object' ? payload : {})
+      }
+
+      // Return the response parts that are common to all content types
       res.writeHead(statusCode)
       res.end(payload)
 

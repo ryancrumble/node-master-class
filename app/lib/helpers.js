@@ -4,10 +4,12 @@
  */
 
 const crypto = require('crypto')
-const config = require('./config')
-const querystring = require('querystring')
+const fs = require('fs')
 const https = require('https')
+const path = require('path')
+const querystring = require('querystring')
 
+const config = require('./config')
 
 /**
  * @name HashHelper
@@ -121,9 +123,35 @@ const sendTwilioSms = function(phone, message, callback) {
   req.end()
 }
 
+
+/**
+ *
+ * @name GetTemplate
+ * @desc Gets the string content of a template
+ * @param name {string} Name of the template
+ * @param callback {(error: string | false, template?: string) => void}
+ * @return {void}
+ */
+function getTemplate(name, callback) {
+  if (typeof name !== 'string' || !name.length) {
+    return callback('A valid template name was not specified.')
+  }
+
+  const templatesDir = path.join(__dirname, '/../templates/')
+
+  fs.readFile(templatesDir + name + '.html', 'utf-8', (err, template) => {
+    if (err || !template || !template.length) {
+      return callback('No template was found')
+    }
+
+    return callback(false, template)
+  })
+}
+
 module.exports = {
   hash,
   parseJsonToObject,
   createRandomString,
   sendTwilioSms,
+  getTemplate
 }
