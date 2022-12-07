@@ -19,4 +19,6 @@ module.exports = {
     'api/checks': handlers.checks,
     'api/tokens': handlers.tokens,
     'api/users': handlers.users,
+    'favicon.ico': handlers.favicon,
+    'public': handlers.public
 };
