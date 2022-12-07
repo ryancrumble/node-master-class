@@ -1,7 +1,7 @@
 const helpers = require('../../helpers')
 
 /**
- *
+ * @name PublicHandler
  * @param data
  * @param callback
  * @return {*}
@@ -29,7 +29,6 @@ function publicHandler(data, callback) {
     const contentType = function() {
       const _stringArray = trimmedAssetName.split('.')
       const fileExtension = _stringArray[_stringArray.length -1]
-      console.log('fileExtension: ', fileExtension)
 
       switch (fileExtension) {
         case 'css':
@@ -47,7 +46,6 @@ function publicHandler(data, callback) {
 
     return callback(200, data, contentType)
   })
-
 }
 
 module.exports = publicHandler
