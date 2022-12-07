@@ -14,7 +14,7 @@ const util = require('util')
 const debug = util.debuglog('server')
 
 const config = require('./config')
-const handlers = require('./handlers/json')
+const handlers = require('./handlers')
 const helpers = require('./helpers')
 const router = require('./router')
 
@@ -54,7 +54,10 @@ const unifiedServer = (req, res) => {
      * @type {(function(data: any, callback: (statusCode: string,
      *     payload?: any) => void): void)}
      */
-    const chosenHandler = typeof router[trimmedPath] !== 'undefined' ? router[trimmedPath] : handlers.notFound
+    let chosenHandler = typeof router[trimmedPath] !== 'undefined' ? router[trimmedPath] : handlers.notFound
+
+    // If the request is within a public dir, use the public handler instead
+    chosenHandler = trimmedPath.includes('public/') ? handlers.public : chosenHandler
 
     const _data = {
       trimmedPath,
@@ -68,7 +71,7 @@ const unifiedServer = (req, res) => {
     /**
      * @param _data {any}
      * @param callback {(statusCode?: number, payload?: string | object,
-     *   contentType?: 'json' | 'html') => void}
+     *   contentType?: string) => void}
      * @return {void}
      */
     chosenHandler(_data, (statusCode, payload, contentType) => {
@@ -77,7 +80,6 @@ const unifiedServer = (req, res) => {
 
       // Use status code called back by handler or default
       statusCode = typeof (statusCode) === 'number' ? statusCode : 200
-
 
       // Return the response parts that are content specific
       switch (contentType) {
@@ -88,6 +90,26 @@ const unifiedServer = (req, res) => {
         case 'html':
           res.setHeader('Content-Type', 'text/html')
           payload = typeof (payload) === 'string' ? payload : ''
+          break
+        case 'favicon':
+          res.setHeader('Content-Type', 'image/x-icon')
+          payload = typeof (payload) !== 'undefined' ? payload : ''
+          break
+        case 'css':
+          res.setHeader('Content-Type', 'text/css')
+          payload = typeof (payload) !== 'undefined' ? payload : ''
+          break
+        case 'png':
+          res.setHeader('Content-Type', 'image/png')
+          payload = typeof (payload) !== 'undefined' ? payload : ''
+          break
+        case 'jpeg':
+          res.setHeader('Content-Type', 'image/jpeg')
+          payload = typeof (payload) !== 'undefined' ? payload : ''
+          break
+        case 'plain':
+          res.setHeader('Content-Type', 'text/plain')
+          payload = typeof (payload) !== 'undefined' ? payload : ''
           break
         default:
           res.setHeader('Content-Type', 'application/json')

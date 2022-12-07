@@ -183,15 +183,15 @@ function addUniversalTemplates(input, data, callback) {
         const combinedTemplate = [
           '<html lang="en">\n',
           metaTemplate,
-          '<body class="{body.class}">\n' +
+          '\n<body class="{body.class}">\n' +
           '<!-- Page Wrapper -->\n' +
           '<div class="wrapper">\n',
           headerTemplate,
-          '<div class="content">\n',
+          '\n<div class="content">\n',
           input,
           '\n</div>\n',
           footerTemplate,
-          '</body>\n' +
+          '\n</body>\n' +
           '</html>',
         ].join('')
 
@@ -233,11 +233,36 @@ function interpolateTemplate(input, data) {
   return input
 }
 
+
+/**
+ * @name GetStaticAsset
+ * @desc retrieve a static asset from the public directory
+ * @param fileName {string}
+ * @param callback {Function}
+ * @return {*}
+ */
+function getStaticAsset(fileName, callback) {
+  if (typeof fileName !== 'string' || !fileName.length) {
+    return callback('A valid filename was not specified. Filename: %s', fileName)
+  }
+
+  const publicDir = path.join(__dirname, '/../public/')
+
+  fs.readFile(publicDir + fileName, (err, data) => {
+    if (err || !data) {
+      return callback('No file found')
+    }
+
+    return callback(false, data)
+  })
+}
+
 module.exports = {
   hash,
   parseJsonToObject,
   createRandomString,
   sendTwilioSms,
+  getStaticAsset,
   getTemplate,
   addUniversalTemplates,
   interpolateTemplate,

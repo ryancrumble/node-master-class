@@ -1,5 +1,5 @@
 /**
- * @module Handlers
+ * @module JSONHandlers
  *
  */
 
