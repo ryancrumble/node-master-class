@@ -16,9 +16,8 @@ function rootHandler(data, callback) {
 
   // Prepare data for interpolation
   const templateData = {
-    'head.title': 'This is the title',
-    'head.description': 'This is the meta description',
-    'body.title': 'Hello templated world!',
+    'head.title': 'Real Uptime Monitoring - Made Simple',
+    'head.description': 'We offer free, simple uptime monitoring for HTTP/HTTPS sites of all kinds. When you\'re site goes down, we send you a text to let you know',
     'body.class': 'index',
   }
 

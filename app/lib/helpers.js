@@ -164,6 +164,8 @@ function addUniversalTemplates(input, data, callback) {
   input = typeof (input) === 'string' && !!input.length ? input : ''
   data = typeof (data) === 'object' && !!data ? data : {}
 
+  const bodyClass = data['body.class'] ?? ''
+
   // Get meta, header and footer templates
   getTemplate('_meta', data, (err, metaTemplate) => {
     if (err || !metaTemplate) {
@@ -183,7 +185,7 @@ function addUniversalTemplates(input, data, callback) {
         const combinedTemplate = [
           '<html lang="en">\n',
           metaTemplate,
-          '\n<body class="{body.class}">\n' +
+          `\n<body ${bodyClass ? `class="${bodyClass}"` : ''}>\n` +
           '<!-- Page Wrapper -->\n' +
           '<div class="wrapper">\n',
           headerTemplate,
